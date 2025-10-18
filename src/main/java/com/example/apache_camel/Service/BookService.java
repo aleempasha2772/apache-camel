@@ -23,4 +23,9 @@ public class BookService {
     public Book findByName(String name) { return books.findByName(name).orElse(null); }
 
     public void deleteById(Long id) { books.deleteById(id); }
+    
+    public Book findById(Long id) {
+    	
+		return books.findById(id).orElse(null);
+    }
 }

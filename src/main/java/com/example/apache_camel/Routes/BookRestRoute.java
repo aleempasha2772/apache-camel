@@ -42,11 +42,24 @@ public class BookRestRoute extends RouteBuilder{
 		    .to("direct:book-findAll");
 
 		from("direct:book-findAll").bean(bookService, "findAll");
+		
+		rest("/book")
+		.get("/{id}").outType(Book.class)
+		.to("direct:book-findById");
+		
+		from("direct:book-findById")
+		  .bean(bookService, "findById(${header.id})")
+		  .choice()
+		    .when(body().isNull())
+		      .setHeader("CamelHttpResponseCode", constant(404))
+		      .setBody().simple("{\"message\":\"Book not found\"}")
+		  .end();
 
 		// GET /book/{name}
 		rest("/book")
-		  .get("/{name}").outType(Book.class)
+		  .get("/name/{name}").outType(Book.class)
 		    .to("direct:book-findByName");
+		
 
 		from("direct:book-findByName")
 		  .bean(bookService, "findByName(${header.name})")
